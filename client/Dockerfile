@@ -1,5 +1,5 @@
 # Use an updated Node.js version for building the frontend
-FROM node:18 AS web-build
+FROM node:latest AS web-build
 WORKDIR /usr/src/app
 
 # Copy the client source code

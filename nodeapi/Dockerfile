@@ -9,7 +9,7 @@ COPY ./ ./nodeapi/
 RUN cd nodeapi && npm install
 
 # Final production image
-FROM node:18
+FROM node:latest
 WORKDIR /usr/src/app/
 
 # Copy built application from the previous stage

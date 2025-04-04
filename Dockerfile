@@ -1,17 +1,17 @@
 # Use the latest stable Node.js version for UI build
-FROM node:18 AS ui-build
+FROM node:latest AS ui-build
 WORKDIR /usr/src/app
 COPY client/ ./client/
 RUN cd client && npm install && npm run build
 
 # Use a stable Node.js version for API build
-FROM node:18 AS server-build
+FROM node:latest AS server-build
 WORKDIR /usr/src/app
 COPY nodeapi/ ./nodeapi/
 RUN cd nodeapi && npm install
 
 # Final production image
-FROM node:18
+FROM node:latest
 WORKDIR /usr/src/app/
 
 # Copy the server build
