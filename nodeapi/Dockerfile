@@ -9,7 +9,7 @@ COPY nodeapi/package*.json ./nodeapi/
 RUN cd nodeapi && npm install
 
 # Copy the rest of the application files
-COPY nodeapi/ ./nodeapi/
+COPY ./ ./nodeapi/
 
 # Final production image
 FROM node:18
