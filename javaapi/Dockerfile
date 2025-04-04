@@ -1,8 +1,8 @@
-# Use an updated OpenJDK version for building
-FROM openjdk:17 AS BUILD_IMAGE
+# Use OpenJDK 17 based on Debian for compatibility with apt-get
+FROM openjdk:17-slim AS BUILD_IMAGE
 WORKDIR /usr/src/app/
 
-# Update package lists and install Maven
+# Install Maven
 RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 
 # Copy the application source
@@ -11,8 +11,8 @@ COPY ./ /usr/src/app/
 # Build the application, skipping tests
 RUN mvn install -DskipTests
 
-# Use an updated OpenJDK version for runtime
-FROM openjdk:17
+# Use OpenJDK 17 for runtime
+FROM openjdk:17-slim
 WORKDIR /usr/src/app/
 
 # Copy the built JAR file from the build stage
