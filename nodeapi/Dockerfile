@@ -3,13 +3,10 @@ FROM node:18 AS nodeapi-build
 WORKDIR /usr/src/app
 
 # Copy only package.json first to leverage Docker caching
-COPY nodeapi/package*.json ./nodeapi/
+COPY ./ ./nodeapi/
 
 # Install dependencies
 RUN cd nodeapi && npm install
-
-# Copy the rest of the application files
-COPY ./ ./nodeapi/
 
 # Final production image
 FROM node:18
