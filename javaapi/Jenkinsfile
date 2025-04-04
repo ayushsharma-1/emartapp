@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+	
+    environment {
+        REGISTRY = "repository.k8sengineers.com/apexrepo/main"
+        REGISTRY_CREDENTIAL = 'NexusRepoLogin'
+        CART_REGISTRY = "https://repository.k8sengineers.com"
+    }
+	
+    stages {
+	
+        stage('Build Image') {
+            steps {
+                script {
+                    dockerImage = docker.build("${REGISTRY}:${BUILD_NUMBER}", "./javaapi/")
+                }
+            }
+        }
+	  
+        stage('Deploy Image') {
+            steps {
+                script {
+                    docker.withRegistry(CART_REGISTRY, REGISTRY_CREDENTIAL) {
+                        dockerImage.push("${BUILD_NUMBER}")
+                        dockerImage.push('latest')
+                    }
+                }
+            }
+        }
+
+        stage('Kubernetes Deploy') {
+            steps {
+                withCredentials([file(credentialsId: 'CartWheelKubeConfig1', variable: 'KUBECONFIG_FILE')]) {
+                    script {
+                        sh """
+                            export KUBECONFIG=\${KUBECONFIG_FILE}
+                            pwd
+                            helm upgrade --install kubekart kkartchart \
+                                --set kkartchart-backend.image.client.repository=${REGISTRY}:${BUILD_NUMBER} \
+                                --namespace kart
+                        """
+                    }
+                }
+            }  
+        }
+    }
+}
