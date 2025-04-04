@@ -3,17 +3,17 @@ FROM node:18 AS web-build
 WORKDIR /usr/src/app
 
 # Copy the client source code
-COPY client/ ./client/
+COPY ./ ./client
 
 # Install dependencies and build the project
 RUN cd client && npm install && npm run build
 
 # Use a stable version of Nginx for serving the built frontend
-FROM nginx:1.25.3
+FROM nginx:latest
 WORKDIR /usr/share/nginx/html
 
 # Copy the built frontend files to the Nginx directory
-COPY --from=web-build /usr/src/app/client/dist/client/ ./
+COPY --from=web-build /usr/src/app/client/dist/client/ /usr/share/nginx/html
 
 # Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
